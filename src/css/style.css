@@ -32,6 +32,9 @@ input {
     justify-content: center;
     border:1px solid black;
     padding: 20px;
+    margin-bottom: 25%;
+    margin-right: 10%;
+    margin-left: 10%;
 }
 .welcome-popup-title {
     display: flex;
@@ -65,13 +68,6 @@ input {
 .welcome-popup-input-wrap input {
     width: 100%;
     min-height: 40px;
-}
-
-.popup-hidden {
-    display: none;
-}
-.popup-show {
-    display: flex;
 }
 
 .chat-app-container {
@@ -212,4 +208,15 @@ input {
     border-radius: 10px;
     padding: 10px;
 
+}
+
+.popup-input-error {
+    border: 1px solid red;
+}
+
+.popup-hidden, .chat-hidden {
+    display: none;
+}
+.popup-show, .chat-show {
+    display: flex;
 }
