@@ -113,6 +113,9 @@ input {
     margin-left: 20px;
     justify-content: center;
 }
+.you-nick {
+    color:red;
+}
 .chat-window-main-wrap {
     display: inline-flex;
     flex-direction: column;
@@ -220,3 +223,4 @@ input {
 .popup-show, .chat-show {
     display: flex;
 }
+

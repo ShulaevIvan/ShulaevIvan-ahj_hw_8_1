@@ -1,7 +1,15 @@
 import AuthPopup from '../components/chat/auth';
 import Chat from '../components/chat/chat';
 
-
+(async () => {
+    const request = await fetch(`http://localhost:7070/users/gettoken`, {
+        method: 'GET',
+    });
+    const result = request.json();
+    result.then((response) => {
+        console.log(response)
+    });
+})();
 
 
 window.addEventListener('DOMContentLoaded', () => {

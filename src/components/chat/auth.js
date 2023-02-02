@@ -8,19 +8,21 @@ export default class AuthPopup {
 
         this.popupInput.addEventListener('click', this.clearInput);
         this.authBtn.addEventListener('click', this.validateInput);
-        this.generateToken = this.generateToken.bind(this);
+        this.token = undefined;
+
     }
 
     generateToken(){
         const rand = function() {
-            return Math.random().toString(36).substr(2);
+            return Math.random().toString(36)
         };
         
         const token = function() {
-            return rand() + rand(); 
+            return rand() + rand() + rand() +  rand(); 
         };
-        
-        return token();
+        const result = token();
+        this.token = result;
+        return result;
     }
 
     validateInput = (e) => {
@@ -31,35 +33,35 @@ export default class AuthPopup {
         }
         else if (this.userName) {
             this.popupInput.classList.remove('popup-input-error');
-            (async () => {
-                const request = await fetch('http://localhost:7070/users', {
-                    method:'POST',
-                    body: this.userName
-                })
-
-                if (request.status === 201) {
-                    let userId;
-                    let token;
-                    request.json()
-                    .then((result) => {
-                        userId = result.user.id;
-                        let checkToken = result.user
-
-                        if (result.user.token === false) {
-                            token = this.generateToken(); 
-                            (async () => {
-                                const request = await fetch(`http://localhost:7070/users/${userId}`, {
-                                    method: 'POST',
-                                    body: token
-                                });
-                            })();
-                        }
-                        return;
-                    });
-
-                }
-            })();
+            this.auth(this.userName);
+            
         }
+    }
+
+    auth(name){
+        
+        (async () => {
+            this.userName = name;
+            const request = await fetch('http://localhost:7070/users', {
+                method:'POST',
+                body: JSON.stringify({ name: this.userName, token: this.token })
+            });
+
+            if (request.status === 201) {
+                let userId;
+                request.json()
+                .then((result) => {
+                    userId = result.user.id;
+                    window.location.reload();
+                });
+            }
+            if (request.status === 200) {
+                request.json()
+                .then((result) => {
+                    this.popupInput.value = result.status
+                });
+            }
+        })();
     }
 
     clearInput(e) {
