@@ -164,6 +164,14 @@ input {
     background: lightgreen;
     border: 1px solid green;
 }
+.you-message-date, .user-message-date {
+    font-size: 14px;
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px;
+}
+
 .user-message-content {
     background-color: lightblue;
     border: 1px solid #6079d1;
@@ -187,18 +195,14 @@ input {
     width: 100%;
     padding-right: 10px;
 }
-.user-message-text {
+.user-message-text, .you-message-text {
     display: flex;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     -ms-hyphens: auto;
+    padding: 5px 0;
 }
-.you-message-text {
-    display: flex;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    -ms-hyphens: auto;
-}
+
 .keybord-block-container {
     display: flex;
     justify-content: center;

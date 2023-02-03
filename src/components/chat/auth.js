@@ -12,18 +12,17 @@ export default class AuthPopup {
 
     }
 
-    generateToken(){
-        const rand = function() {
-            return Math.random().toString(36)
-        };
-        
-        const token = function() {
-            return rand() + rand() + rand() +  rand(); 
-        };
-        const result = token();
-        this.token = result;
-        return result;
+    getToken() {
+        (async () => {
+            const request = await fetch('http://localhost:7070/users/gettoken', {
+                method: 'GET'
+            });
+            const response = await request.json()
+            this.token = response.newToken
+            sessionStorage.setItem('chatUser', this.token); 
+        })();
     }
+
 
     validateInput = (e) => {
         e.preventDefault();
@@ -33,13 +32,13 @@ export default class AuthPopup {
         }
         else if (this.userName) {
             this.popupInput.classList.remove('popup-input-error');
+            localStorage.setItem('chatUserName', this.userName);
             this.auth(this.userName);
             
         }
     }
 
     auth(name){
-        
         (async () => {
             this.userName = name;
             const request = await fetch('http://localhost:7070/users', {
