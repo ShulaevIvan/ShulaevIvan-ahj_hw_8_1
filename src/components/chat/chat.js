@@ -47,8 +47,8 @@ export default class Chat {
           } else if (archiveObj.user !== this.userName) {
             this.createMessage(archiveObj.user, archiveObj.message, archiveObj.time, false, 'history');
           }
+          this.chatWall.lastElementChild.scrollIntoView();
         });
-        this.chatWall.lastElementChild.scrollIntoView();
       }
 
       if (cData.clients) {

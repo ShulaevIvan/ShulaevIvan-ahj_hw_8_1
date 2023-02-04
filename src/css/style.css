@@ -54,6 +54,9 @@ input {
     justify-content: center;
     margin-bottom: 15px;
 }
+.welcome-btn:hover{
+    cursor: pointer;
+}
 
 .welcome-btn-wrap button {
     min-width: 350px;
