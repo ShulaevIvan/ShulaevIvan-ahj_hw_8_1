@@ -160,6 +160,22 @@ input {
     margin:10px 0;
     border-radius: 10px;
 }
+.message-content-history {
+    background: lightgray;
+    border: 1px solid gray;
+    opacity: 0.9;
+    max-width: 50%;
+    flex-wrap: wrap;
+    min-width: 50%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+.message-content-history .user-message-nick {
+    color: black;
+}
 .you-message-content {
     background: lightgreen;
     border: 1px solid green;
@@ -182,6 +198,7 @@ input {
     margin-top: 20px;
 }
 .user-message-nick {
+    color: darkblue;
     display: flex;
     justify-content: flex-start;
     min-width: 50px;
@@ -194,6 +211,7 @@ input {
     min-width: 50px;
     width: 100%;
     padding-right: 10px;
+    color: red;
 }
 .user-message-text, .you-message-text {
     display: flex;

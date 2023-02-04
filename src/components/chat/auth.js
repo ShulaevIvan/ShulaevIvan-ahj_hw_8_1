@@ -5,20 +5,20 @@ export default class AuthPopup {
         this.popupInput = this.popup.querySelector('.welcome-input');
         this.authBtn = this.popup.querySelector('.welcome-btn');
         this.userName = undefined;
-
         this.popupInput.addEventListener('click', this.clearInput);
         this.authBtn.addEventListener('click', this.validateInput);
+        this.serverUrl = 'http://localhost:7070';
         this.token = undefined;
 
     }
 
     getToken() {
         (async () => {
-            const request = await fetch('http://localhost:7070/users/gettoken', {
+            const request = await fetch(`${this.serverUrl}/users/gettoken`, {
                 method: 'GET'
             });
-            const response = await request.json()
-            this.token = response.newToken
+            const response = await request.json();
+            this.token = response.newToken;
             sessionStorage.setItem('chatUser', this.token); 
         })();
     }
@@ -41,10 +41,18 @@ export default class AuthPopup {
     auth(name){
         (async () => {
             this.userName = name;
-            const request = await fetch('http://localhost:7070/users', {
+            const request = await fetch(`${this.serverUrl}/users`, {
                 method:'POST',
                 body: JSON.stringify({ name: this.userName, token: this.token })
             });
+
+            if (request.status === 200) {
+                request.json()
+                .then((result) => {
+                    this.popupInput.classList.add('popup-input-error');
+                    this.popupInput.value = result.status;
+                });
+            }
 
             if (request.status === 201) {
                 let userId;
@@ -54,17 +62,12 @@ export default class AuthPopup {
                     window.location.reload();
                 });
             }
-            if (request.status === 200) {
-                request.json()
-                .then((result) => {
-                    this.popupInput.value = result.status
-                });
-            }
         })();
     }
 
     clearInput(e) {
         e.preventDefault();
+        e.target.classList.remove('popup-input-error');
         e.target.value = '';
     }
 

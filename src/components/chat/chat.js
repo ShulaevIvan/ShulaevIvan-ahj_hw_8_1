@@ -8,18 +8,18 @@ export default class Chat {
 
         this.chatInput.addEventListener('keyup', (e) => {
             const value = e.target.value
-            if (e.key === 'Enter')  {
+            if (e.key === 'Enter' && value !== '')  {
                 e.target.value = '';
-                this.ws.send(JSON.stringify(value))
+                this.ws.send(JSON.stringify(value));
             }
         });
-
     }
 
-    init(name) {
+    init(name, serverUrl) {
+        this.wsUrl = serverUrl.replace('http:', 'ws:') + '/';
         this.userName = name;
-        sessionStorage.clear()
-        this.ws = new WebSocket('ws://localhost:7070/');
+        sessionStorage.clear();
+        this.ws = new WebSocket(this.wsUrl);
         this.ws.addEventListener('open', (e) =>  {
             console.log('ws open')
         });
@@ -37,20 +37,18 @@ export default class Chat {
                 }
             });
 
-
             if (cData && archive) {
                 this.clearChat();
-                const allMessages = Array.from(document.querySelectorAll('.user-item'));
-                console.log(archive)
-                cData.archive.forEach((message) => {
-                    if (message.user === this.userName){
-                        this.createMessage(message.user, message.message, message.time, true)
+                cData.archive.forEach((archiveObj) => {
+                    archiveObj.message = archiveObj.message.replace(/"/g, '')
+                    if (archiveObj.user === this.userName){
+                        this.createMessage(archiveObj.user, archiveObj.message, archiveObj.time, 'you')
                     }
-                    else if (message.user !== this.userName) {
-                        this.createMessage(message.user, message.message, message.time)
-                    }
-                        
+                    else if (archiveObj.user !== this.userName) {
+                        this.createMessage(archiveObj.user, archiveObj.message, archiveObj.time, false, 'history')
+                    }  
                 });
+                this.chatWall.lastElementChild.scrollIntoView();
             }
             
 
@@ -67,6 +65,7 @@ export default class Chat {
             }
             if (cData.chat) {
                 cData.chat.forEach((userMessage) => {
+                    userMessage.message = userMessage.message.replace(/"/g, '')
                     if (userMessage.user === this.userName){
                         this.createMessage(userMessage.user, userMessage.message, userMessage.time, true)
                     }
@@ -74,37 +73,13 @@ export default class Chat {
                         this.createMessage(userMessage.user, userMessage.message, userMessage.time)
                     }
     
-                })
+                });
+                this.chatWall.lastElementChild.scrollIntoView();
             }
         });
     }
 
-    addToChat(user, you = false) {
-        this.currentUser = user
-        const userItem = document.createElement('div');
-        const userAvatar = document.createElement('div');
-        const userNick = document.createElement('div');
-        if (you) userNick.classList.add('you-nick')
-        userItem.classList.add('user-item');
-        userAvatar.classList.add('user-avatar');
-        userNick.classList.add('user-nick');
-        userNick.textContent = this.currentUser.name
-        
-        userItem.appendChild(userAvatar);
-        userItem.appendChild(userNick);
-        this.chatUsers.appendChild(userItem);
-        
-    }
-
-    removeFromChat(){
-        const allUsers = document.querySelectorAll('.user-item');
-        allUsers.forEach((item) => {
-            item.remove()
-        })
-
-    }
-
-    createMessage(name, message, time, you = false) {
+    createMessage(name, message, time, you = false, history = false) {
         if (you) {
             const youChatMessage = document.createElement('div');
             const youMessageContent = document.createElement('div');
@@ -135,7 +110,8 @@ export default class Chat {
             const userMessageDate = document.createElement('div');
             userMessageChat.classList.add('chat-message');
             userMessageChat.classList.add('user-message');
-            userMessageContent.classList.add('user-message-content');
+            if (history) userMessageContent.classList.add('message-content-history');
+            else userMessageContent.classList.add('user-message-content');
             userMessageContent.classList.add('chat-message');
             userMessageNick.classList.add('user-message-nick');
             userMessageText.classList.add('user-message-text');
@@ -152,13 +128,35 @@ export default class Chat {
         }
     }
 
+    addToChat(user, you = false) {
+        this.currentUser = user
+        const userItem = document.createElement('div');
+        const userAvatar = document.createElement('div');
+        const userNick = document.createElement('div');
+        if (you) userNick.classList.add('you-nick')
+        userItem.classList.add('user-item');
+        userAvatar.classList.add('user-avatar');
+        userNick.classList.add('user-nick');
+        userNick.textContent = this.currentUser.name
+        
+        userItem.appendChild(userAvatar);
+        userItem.appendChild(userNick);
+        this.chatUsers.appendChild(userItem);
+    }
+
+    removeFromChat(){
+        const allUsers = document.querySelectorAll('.user-item');
+        allUsers.forEach((item) => {
+            item.remove();
+        });
+    }
+
     clearChat() {
         const allMessages = document.querySelectorAll('.chat-message');
         if (allMessages){
             allMessages.forEach((item) => {
-                item.remove()
-            })
+                item.remove();
+            });
         }
-       
     }
 }

@@ -3,13 +3,14 @@ import Chat from '../components/chat/chat';
 
 
 window.addEventListener('DOMContentLoaded', () => {
-    const popup = new AuthPopup('.welcome-popup-container');
+    const serverUrl = 'http://localhost:7070';
+    const popup = new AuthPopup('.welcome-popup-container', serverUrl);
     const chat = new Chat();
     popup.show();
     let user;
     const token = sessionStorage.getItem('chatUser');
     popup.token = token;
-    popup.popupInput.value = localStorage.getItem('chatUserName')
+    popup.popupInput.value = localStorage.getItem('chatUserName');
 
     if (!token){
         popup.getToken();
@@ -17,20 +18,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     (async () => {
-        const request = await fetch(`http://localhost:7070/users/${token}`, {
+        const request = await fetch(`${serverUrl}/users/${token}`, {
             method: 'POST',
-            body: token
+            body: token,
         });
 
-        const result = request.json();
-        result.then((response) => {
-            if (response && response.user && response.user.token === token) {
-                user = response.user.name;
-                popup.hide();
-                chat.init(user)
-            }
-            return
-        });
+        const result = await request.json();
+        if (result && result.user && result.user.token === token) {
+            user = result.user.name;
+            popup.hide();
+            chat.init(user, serverUrl);
+        }
     })();
 
 
